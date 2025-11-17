@@ -1,0 +1,96 @@
+# Armed Forces Data Wrangling ----
+## Goal: Tidy the Armed Forces Active Duty Data and 
+## join it with data from the Pay Grade and Rank webpage to create a data Frame ## where the case is a group of soldiers. 
+## Then alter that data frame to make a second data frame 
+## where a case is an individual soldier.
+
+## Step 1: Load Packages ----
+### Needed Packages: {tidyverse}
+#install.packages("tidyverse")
+#install.packages("rvest")
+library(tidyverse)
+library(rvest)
+
+## Step 2: Load Data ----
+### Needed data: "US_Armed_Forces_(6_2025).csv"
+### Needed data: Table from "Stat184_PayGradeRanks.html"
+armed_forces_data_raw <- read.table(
+  file = "C:\\Users\\trist\\Documents\\STAT 184\\US_Armed_Forces_(6_2025).csv",
+  header = FALSE,
+  sep = ",",
+  skip = 1
+)
+
+rank_data_raw <- read_html("https://neilhatfield.github.io/Stat184_PayGradeRanks.html") %>%
+  html_elements(css = "table") %>%
+  html_table() %>%
+  as.data.frame()
+
+## Step 3: Check the Data ----
+#view(armed_forces_data_raw)
+#view(rank_data_raw)
+
+## Step 4: Tidy Rank Data ----
+rank_data_clean <- rank_data_raw %>%
+  rename( ## Step 5: Rename Columns ----
+          PersonelType = Var.1,
+          PayGrade = Pay.Grade,
+          Army_Rank = Ranks.by.Branch.of.Service,
+          Navy_Rank = Ranks.by.Branch.of.Service.1,
+          MarineCorps_Rank = Ranks.by.Branch.of.Service.2,
+          AirForce_Rank = Ranks.by.Branch.of.Service.3,
+          SpaceForce_Rank = Ranks.by.Branch.of.Service.4,
+          CoastGuard_Rank = Ranks.by.Branch.of.Service.5,
+  ) %>%
+  select(-CoastGuard_Rank) %>% ## Step 6: Remove Coast Guard Ranks columns ----
+  slice(-c(1,26)) %>% ## Step 7: Remove descriptive rows that aren't data ----
+  pivot_longer( ## Step 8: Pivot Rank Columns into 2 columns Branch and Rank ----
+    cols = -c(PersonelType, PayGrade),
+    names_to = ("Branch"),
+    values_to = "Rank",
+    names_pattern = "(.*)_Rank"
+  )
+
+## Step 9: Tidy armed_forces_data ----
+armed_forces_data_clean <- armed_forces_data_raw %>%
+  select(-V4, -V7, -V10, -V13, -V16, -V17, -V18, -V19) %>% ## Step 10: Remove Total columns ----
+  slice(-c(1,2,12,18,29,30,31)) %>% ## Step 11: Remove Total rows ----
+  rename( ## Step 12: Rename columns ----
+    PayGrade = V1,
+    Army_Male = V2,
+    Army_Female = V3,
+    Navy_Male = V5,
+    Navy_Female = V6,
+    MarineCorps_Male = V8,
+    MarineCorps_Female = V9,
+    AirForce_Male = V11,
+    AirForce_Female = V12,
+    SpaceForce_Male = V14,
+    SpaceForce_Female = V15,
+    ) %>%
+  pivot_longer( ## Step 13: Pivot Columns into 2 columns Branch and Sex ----
+    cols = -PayGrade,
+    names_to = c("Branch", "Sex"),
+    names_sep = "_",
+    values_to = "ActiveDutyPersonel",
+  ) %>%
+  mutate( ## Step 14: Remove N/A* and convert character strings in frequency column to integers ----
+    ActiveDutyPersonel = str_replace_all(ActiveDutyPersonel, "[^0-9]", ""),
+    ActiveDutyPersonel = if_else(ActiveDutyPersonel == "", "0", ActiveDutyPersonel),
+    ActiveDutyPersonel = as.integer(ActiveDutyPersonel)
+  )
+
+## Step 15: Combining the two clean DataFrames to create group_joined_data
+group_joined_data <- rank_data_clean %>%
+  inner_join(armed_forces_data_clean, by = c("PayGrade", "Branch"))
+  
+## Step 16: Uncount group_joined_data to get individual_joined_data ----
+individual_joined_data <- group_joined_data %>%
+  uncount(ActiveDutyPersonel)
+
+view(armed_forces_data_clean)
+view(rank_data_clean)
+view(group_joined_data)
+view(individual_joined_data)
+
+write.csv(individual_joined_data, "C:\\Users\\trist\\Documents\\STAT 184\\Individual_Army_Data.csv")

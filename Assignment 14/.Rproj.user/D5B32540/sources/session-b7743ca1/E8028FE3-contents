@@ -1,0 +1,79 @@
+---
+title: "Activity 14"
+subtitle: "Stat 184"
+author: "Tristan Farnell"
+date: "Nov. 7, 2023"
+date-modified: now
+format: 
+  html:
+    embed-resources: true
+    number-sections: true
+    toc: true
+    toc-depth: 4
+    toc-location: right
+    fig-align: center
+    cap-location: top
+    link-external-newwindow: true
+execute: 
+  echo: false
+  warning: false
+---
+
+## Armed Forces Data Wrangling Redux
+```{r}
+# Armed Forces Table Making ----
+## Goal: To create two well formatted frequency tables from the individual cased Armed forces data set,
+##one for males and one for females, in which the cases are organized by rank and branch.
+
+## Step 1: Load Packages ----
+### Needed Packages: {tidyverse}
+library(tidyverse)
+library(dplyr)
+library(janitor)
+
+## Step 2 Load Data ----
+armed_forces_indiv_data<- read.table(
+  file = "C:\\Users\\trist\\Documents\\STAT 184\\Individual_Army_Data.csv",
+  header = TRUE,
+  sep = ",",
+  skip = 0
+)
+
+## Step 4: Make Male Table ----
+male_table <- armed_forces_indiv_data %>%
+  filter(Sex == "Male") %>%
+  tabyl(Rank, Branch) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_title(
+    placement = "combined",
+    row_name = "Rank",
+    col_name = "Branch"
+  )
+
+## Step 5: Make Female Table ----
+female_table <- armed_forces_indiv_data %>%
+  filter(Sex == "Female") %>%
+  tabyl(Rank, Branch) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_title(
+    placement = "combined",
+    row_name = "Rank",
+    col_name = "Branch"
+  )
+
+## Step 6: Print Tables
+male_table
+female_table
+
+```
+
+## Popularity of Baby Names
+
+## Plotting a Mathematical Function
+
+## What You Feel You've Learned So Far
+
