@@ -1,0 +1,31 @@
+{
+    "id": "7A885725",
+    "path": "~/STAT 184/Assignment 14/Assignment 14.qmd",
+    "project_path": "Assignment 14.qmd",
+    "type": "quarto_markdown",
+    "hash": "1638984656",
+    "contents": "",
+    "dirty": false,
+    "created": 1763163774167.0,
+    "source_on_save": true,
+    "relative_order": 1,
+    "properties": {
+        "rmdVisualMode": "false",
+        "rmdVisualWrapConfigured": "true",
+        "source_window_id": "",
+        "Source": "Source",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "42:0",
+        "cursorPosition": "9,14",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1763166926,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1763166926517,
+    "read_only": false,
+    "read_only_alternatives": []
+}

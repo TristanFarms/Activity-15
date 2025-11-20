@@ -1,0 +1,211 @@
+---
+title: "Activity 14"
+subtitle: "Stat 184"
+author: "Tristan Farnell"
+date: "Nov. 7, 2023"
+date-modified: now
+format: 
+  pdf:
+    number-sections: true
+    toc: false
+    toc-depth: 4
+execute: 
+  echo: false
+  warning: false
+---
+
+## Armed Forces Data Wrangling Redux
+```{r}
+# Armed Forces Table Making ----
+## Goal: To create two well formatted frequency tables from the individual cased Armed forces data set,
+##one for males and one for females, in which the cases are organized by rank and branch.
+## For this display, I will filter to only include enlisted officers from the Army
+
+## Step 1: Load Packages ----
+### Needed Packages: {tidyverse}
+library(tidyverse)
+library(dplyr)
+library(janitor)
+
+## Step 2 Load Data ----
+armed_forces_indiv_data <- read.csv("Individual_Army_Data.csv",
+  header = TRUE,
+  sep = ",",
+  skip = 0
+)
+
+## Step 4: Make Male Table ----
+male_table <- armed_forces_indiv_data %>%
+  filter(Sex == "Male",
+         Branch == "Army",
+         Rank %in% c("Private", "Private First Class", "Coporal Or Specialist", "Segeant", "Staff Sergeant", "Sergeant First Class", "First Sergeant OR Master Sergeant", "Sergeant Major OR Command Sergeant Major")) %>%
+  tabyl(Rank, Branch) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_title(
+    placement = "combined",
+    row_name = "Rank",
+    col_name = "Branch"
+  )
+
+## Step 5: Make Female Table ----
+female_table <- armed_forces_indiv_data %>%
+  filter(Sex == "Female", 
+         Branch == "Army",
+         Rank %in% c("Private", "Private First Class", "Coporal Or Specialist", "Segeant", "Staff Sergeant", "Sergeant First Class", "First Sergeant OR Master Sergeant", "Sergeant Major OR Command Sergeant Major")) %>%
+  tabyl(Rank, Branch) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_title(
+    placement = "combined",
+    row_name = "Rank",
+    col_name = "Branch"
+  )
+
+## Step 6: Print Tables
+```
+### Male Service Members Frequency Table
+```{r}
+knitr::kable(male_table)
+```
+### Female Service Members Frequency Table
+```{r}
+knitr::kable(female_table)
+
+```
+
+## Popularity of Baby Names
+
+## Plotting a Mathematical Function
+```{r}
+# Making a Plot
+
+library(ggplot2)
+
+# Volume function
+getVolume <- function(length, width, cutoutSideLength){
+  volume <- (length - 2*cutoutSideLength) * (width - 2*cutoutSideLength) * (cutoutSideLength)
+  return(volume)
+}
+
+L <- 8.5
+W <- 11
+
+
+# Make data frame 
+side_length_interval <- seq(from = 0, to = 4.25, by = 0.01)
+volume_df <- data.frame(
+  x = side_length_interval,
+  volume = getVolume(L, W, side_length_interval)
+)
+
+# Plot
+ggplot(volume_df, aes(x = x, y = volume)) +
+  geom_line(color = "blue", size = 1) +
+  labs(
+    title = "Volume of the Box vs Cutout Side Length",
+    x = "Side length of cutout (x)",
+    y = "Volume of the box"
+  )
+```
+
+## What You Feel You've Learned So Far
+
+## Code Appendix
+```markdown
+# Appendix: Code
+
+All Code used to create this report follows here:
+
+```{r, echo=TRUE, results='hide', fig.show='hide'}
+
+# Armed Forces Table Making ----
+## Goal: To create two well formatted frequency tables from the individual cased Armed forces data set,
+##one for males and one for females, in which the cases are organized by rank and branch.
+## For this display, I will filter to only include enlisted officers from the Army
+
+## Step 1: Load Packages ----
+### Needed Packages: {tidyverse}
+library(tidyverse)
+library(dplyr)
+library(janitor)
+
+## Step 2 Load Data ----
+armed_forces_indiv_data <- read.csv("Individual_Army_Data.csv",
+  header = TRUE,
+  sep = ",",
+  skip = 0
+)
+
+## Step 4: Make Male Table ----
+male_table <- armed_forces_indiv_data %>%
+  filter(Sex == "Male",
+         Branch == "Army",
+         Rank %in% c("Private", "Private First Class", "Coporal Or Specialist", "Segeant", "Staff Sergeant", "Sergeant First Class", "First Sergeant OR Master Sergeant", "Sergeant Major OR Command Sergeant Major")) %>%
+  tabyl(Rank, Branch) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_title(
+    placement = "combined",
+    row_name = "Rank",
+    col_name = "Branch"
+  )
+
+## Step 5: Make Female Table ----
+female_table <- armed_forces_indiv_data %>%
+  filter(Sex == "Female", 
+         Branch == "Army",
+         Rank %in% c("Private", "Private First Class", "Coporal Or Specialist", "Segeant", "Staff Sergeant", "Sergeant First Class", "First Sergeant OR Master Sergeant", "Sergeant Major OR Command Sergeant Major")) %>%
+  tabyl(Rank, Branch) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_title(
+    placement = "combined",
+    row_name = "Rank",
+    col_name = "Branch"
+  )
+
+## Step 6: Print Tables
+
+### Male Service Members Frequency Table
+
+#knitr::kable(male_table)
+
+### Female Service Members Frequency Table
+
+#knitr::kable(female_table)
+
+# Making a Plot
+
+library(ggplot2)
+
+# Volume function
+getVolume <- function(length, width, cutoutSideLength){
+  volume <- (length - 2*cutoutSideLength) * (width - 2*cutoutSideLength) * (cutoutSideLength)
+  return(volume)
+}
+
+L <- 8.5
+W <- 11
+
+
+# Make data frame 
+side_length_interval <- seq(from = 0, to = 4.25, by = 0.01)
+volume_df <- data.frame(
+  x = side_length_interval,
+  volume = getVolume(L, W, side_length_interval)
+)
+
+# Plot
+ggplot(volume_df, aes(x = x, y = volume)) +
+  geom_line(color = "blue", size = 1) +
+  labs(
+    title = "Volume of the Box vs Cutout Side Length",
+    x = "Side length of cutout (x)",
+    y = "Volume of the box"
+  )
+```
